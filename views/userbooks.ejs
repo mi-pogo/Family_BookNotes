@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Notes</title>
+  <link rel="stylesheet" href="./styles/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">  
+</head>
+
+
+<header data-bs-theme="dark">
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+
+      <a href="/" class="btn btn-outline-light btn-sm me-2">&lt;&lt; Back</a>      
+
+      <a class="navbar-brand" href="/">Book Notes</a>
+  
+      <span>
+        <ul class="navbar-nav me-auto mb-2 mb-md-0 d-flex">
+          <% if (locals.user){%>
+          <li class="nav-item">
+            <form action="/deleteuser" method="POST" onsubmit="return confirmDeleteUser();">
+              <input type="hidden" name="userId" value="<%= user.id %>">
+              <button type="submit" class="btn btn-danger">Delete User</button>
+            </form>
+          </li>
+          <% } %>
+        </ul>
+      </span>
+  
+    </div>
+  </nav>
+</header>
+
+<body>
+
+  <main>
+
+    <div class="container marketing usrbooks-bd-top">
+
+      <hr class="featurette-divider" >  
+      
+      <% if (locals.user){%>
+        
+        <div class="row align-items-center justify-content-between">
+
+          <!-- Left: User Info -->
+          <div class="col-12 col-md-4 d-flex flex-column align-items-center text-center mb-3 mb-md-0">
+            <img src="../assets/img/avatars/avatar<%=user.picId%>.jpg" class="bd-placeholder-img rounded-circle mb-3" width="140" height="140" />
+            <h2 class="fw-normal"><%=user.firstName%>, <%=user.lastName%></h2>
+          </div>
+        
+          <div class="col-12 col-md-8 d-flex justify-content-end align-items-start align-items-md-center gap-2">
+            <div class="d-flex w-100 w-md-auto align-items-stretch gap-2">
+          
+              <!-- Search box -->
+              <div class="position-relative w-100">
+                <input type="text" id="searchBox" class="form-control h-100" placeholder="Search by author, book name, or ISBN">
+                <ul class="list-group position-absolute w-100" id="searchResults" style="z-index: 1000;"></ul>
+              </div>
+          
+              <!-- Button with matching height -->
+              <form action="/addbook" method="POST">
+                <input type="hidden" name="userId" value="<%= user.id %>" />
+                <input type="hidden" name="firstName" value="<%= user.firstName %>" />
+                <input type="hidden" name="lastName" value="<%= user.lastName %>" />
+                <input type="hidden" name="bookTitle" id="bookTitle" />
+                <input type="hidden" name="bookAuthor" id="bookAuthor" />
+                <input type="hidden" name="coverId" id="coverId" />
+                <input type="hidden" name="picId" value="<%= user.picId %>" />
+                <button type="submit" class="btn btn-primary h-100">Add Book</button>
+              </form>
+          
+            </div>
+          </div>          
+        
+        </div>
+
+        <div class="d-flex justify-content-end sort_padding">
+          <form id="sortForm" action="/sortbooks" method="POST" style="max-width: 40%; width: 100%;">
+            <div class="d-flex align-items-center gap-3">
+              
+              <select class="form-select fw-normal lh-1 text-body-secondary fs-6 flex-grow-1" name="sortBy" onchange="document.getElementById('sortForm').submit();">
+                <% if(locals.sortBy) {%>
+                <option disabled <%= !sortBy ? 'selected' : '' %>>Sort By...</option>
+                <option value="usr_read_date" <%= sortBy === 'usr_read_date' ? 'selected' : '' %>>Date Read</option>
+                <option value="usr_rating" <%= sortBy === 'usr_rating' ? 'selected' : '' %>>Rating</option>
+                <option value="title" <%= sortBy === 'title' ? 'selected' : '' %>>Title</option>
+                <option value="author" <%= sortBy === 'author' ? 'selected' : '' %>>Author</option>
+                <% } else {%>
+                  <option selected disabled>Sort By...</option>
+                  <option value="usr_read_date">Date Read</option>
+                  <option value="usr_rating">Rating</option>
+                  <option value="title">Title</option>
+                  <option value="author">Author</option>
+                <% } %>
+              </select>
+              
+              <input type="hidden" name="userId" value="<%= user.id %>" />
+            </div>
+          </form>
+        </div>
+        
+
+      <% } %>      
+
+      <% if ((locals.userBooks) && (locals.user)){%>
+        <% for(let book of userBooks){%>
+          <hr class="featurette-divider">
+          
+          <div class="row featurette align-items-start">
+            <!-- Image section -->
+            <div class="col-12 col-md-3 mb-3 mb-md-0">
+              <% if (parseInt(book.cover_id) > 0) { %>
+                <img src="https://covers.openlibrary.org/b/id/<%= book.cover_id %>-L.jpg" class="img-fluid book_cover_pad" style="max-width: 100%; height: auto;" />
+              <% } else { %>
+                <img src="/assets/img/default_cover.png" class="img-fluid book_cover_pad" style="max-width: 100%; height: auto;" />
+              <% } %>
+            </div>
+          
+            <!-- Text and form section -->
+            <div class="col-12 col-md-9">
+              <h2 class="text-body-primary"><%= book.title %></h2>
+              <h4><span class="text-body-secondary">Author: <%= book.author %></span></h4>
+              <h5 class="featurette-heading fw-normal lh-1"> <span>Date read: <%= book.read_date %></span> </h5>
+          
+              <h5 class="featurette-heading fw-normal lh-1">
+                <span>
+                  Rating:
+                  <%= book.rating >= 1 ? '⭐' : '' %>
+                  <%= book.rating >= 2 ? '⭐' : '' %>
+                  <%= book.rating >= 3 ? '⭐' : '' %>
+                  <%= book.rating >= 4 ? '⭐' : '' %>
+                  <%= book.rating >= 5 ? '⭐' : '' %>
+                </span>
+              </h5>
+          
+              <p class="text-body-primary fs-5 mt-3" style="color:darkblue;"><%= book.note %></p>
+          
+              <form action="/editbook" method="POST" class="mt-3">
+                <div class="d-flex flex-wrap gap-2" style="max-width: 300px;">
+                  <button type="submit" class="btn btn-success flex-grow-1" name="action" value="edit">Edit</button>
+                  <button type="submit" class="btn btn-danger flex-grow-1" name="action" value="delete" onclick="return confirmDeleteBook()">Delete</button>
+                </div>
+                <input type="hidden" name="book_id" value="<%= book.book_id %>">
+                <input type="hidden" name="book_title" value="<%= book.title %>">
+                <input type="hidden" name="book_author" value="<%= book.author %>">
+                <input type="hidden" name="book_note" value="<%= book.note %>">
+                <input type="hidden" name="book_rating" value="<%= book.rating %>">
+                <input type="hidden" name="userId" value="<%= user.id %>">
+                <input type="hidden" name="cover_id" value="<%= book.cover_id %>">
+              </form>
+            </div>
+          </div>
+          
+          
+        <% } %>
+
+        <% if (userBooks.length <= 0){%>
+          <hr class="featurette-divider" >
+          <p>No books to display !</p>
+        <% } %>
+      <% } %>
+
+      <% if (locals.userbooks_error){%>
+        <hr class="featurette-divider" >
+        <p><%= userbooks_error %></p>
+      <% } %>
+
+      <hr class="featurette-divider">
+
+    </div>  
+
+  </main>
+
+<script defer="" src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+  
+  const searchBox = document.getElementById('searchBox');
+  const resultsList = document.getElementById('searchResults');
+
+  // Debounce helper function
+  function debounce(fn, delay) {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+
+  // Debounced search function
+  const handleSearch = async () => {
+    const query = searchBox.value.trim();
+
+    if (query.length < 3) {
+      resultsList.innerHTML = '';
+      return;
+    }
+
+    try {
+      const res = await axios.get(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`);
+      const books = res.data.docs.slice(0, 5); // top 5 results
+
+      resultsList.innerHTML = '';
+
+      books.forEach(book => {
+        const li = document.createElement('li');
+        li.classList.add('list-group-item', 'list-group-item-action');
+
+        // Extract info
+        const title = book.title || 'Unknown Title';
+        const author = book.author_name ? book.author_name.join(', ') : 'Unknown Author';
+        const year = book.first_publish_year || 'N/A';
+        const coverId = book.cover_i;
+
+        // Create content
+        li.innerHTML = `${title} by ${author} (${year})`;
+
+        li.addEventListener('click', () => {
+          searchBox.value = `${title} by ${author} (${year})`;
+          resultsList.innerHTML = '';          
+          // Optional: store or use coverId here
+          document.getElementById('bookTitle').value = book.title;
+          document.getElementById('bookAuthor').value = book.author_name ? book.author_name.join(', ') : '';
+          document.getElementById('coverId').value = book.cover_i || '';
+        });
+
+        resultsList.appendChild(li);
+      });
+
+    } catch (err) {
+      console.error('Error fetching books:', err);
+    }
+  };
+
+  // Attach debounced handler to input
+  searchBox.addEventListener('input', debounce(handleSearch, 300));
+
+  // Clear on ESC key
+  searchBox.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      resultsList.innerHTML = '';
+    }
+  });
+
+  // Clear on outside click
+  document.addEventListener('click', (e) => {
+    if (!searchBox.contains(e.target) && !resultsList.contains(e.target)) {
+      resultsList.innerHTML = '';
+    }
+  });
+
+  function confirmDeleteBook() {
+    return confirm("Are you sure you want to delete this book?");
+  }
+
+  function confirmDeleteUser() {
+    return confirm("Are you sure you want to delete this user? All books related to this user will be also deleted.");
+  }  
+
+</script>
+
+</body>
+
+
+<footer class="py-3 my-4 bg-dark text-white">
+  <ul class="nav justify-content-center pb-3 mb-3">
+    <li class="nav-item"><a href="/" class="nav-link px-2 ">Home</a></li>
+    <li class="nav-item"><a href="#" class="nav-link px-2 ">Top</a></li>
+    <li class="nav-item"><a href="#" class="nav-link px-2 ">About</a></li>
+  </ul>
+  <p class="text-center">© 2025 Family BookNotes</p>
+</footer>
+
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Notes</title>
+  <link rel="stylesheet" href="./styles/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">  
+</head>
+
+
+<header data-bs-theme="dark">
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      
+      <a class="navbar-brand" href="#">Book Notes</a>
+  
+      <span>
+        <ul class="navbar-nav me-auto mb-2 mb-md-0 d-flex">
+          <li class="nav-item">
+            <button type="button" class="btn btn-primary" onclick="toggleUserForm()">Add User</button>
+          </li>
+        </ul>
+      </span>
+  
+    </div>
+  </nav>
+</header>
+
+<body>
+
+  <main>
+
+    <div class="my-5">
+      <div class="position-relative text-center">
+        <img src="../assets/img/cover1.jpg" class="img-fluid w-100" style="height: auto;" alt="Cover Image" />
+        <div class="container py-5 position-absolute top-50 start-50 translate-middle text-white">
+          <h1 class="header_font">Family BookNotes</h1>
+          <h1 class="header_font">All your read books in one place!</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="container marketing">
+
+      <div class="row justify-content-center">
+        <% if (locals.usersList){%>
+          <% for(let user of usersList){%>
+
+          <div class="col-12 col-sm-6 col-lg-3 text-center users-bd-bottom">
+            <img src="../assets/img/avatars/avatar<%=user.picId%>.jpg" class="bd-placeholder-img rounded-circle mb-3" width="140" height="140" />
+            <h2 class="fw-normal"><%=user.firstName%>, <%=user.lastName%></h2>
+            <form action="/view" method="POST">
+              <input type="hidden" name="userId" value="<%= user.id %>" />
+              <button type="submit" class="btn btn-secondary">View Read Books »</button>
+            </form>
+          </div>
+          
+          <% } %>
+        <% } %>
+
+        <% if (locals.users_error){%>
+          <p>No users to display !</p>
+        <% } %>
+      </div>
+
+      <hr id="userHRLine" class="collapse-form featurette-divider">
+  
+      <div id="userFormSection" class="collapse-form d-flex justify-content-center">
+        <form action="/adduser" method="POST" class="d-flex align-items-center flex-wrap gap-4">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <label for="firstNameBox" class="fw-normal lh-1 fs-5 mb-0" style="color: steelblue; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">First Name:</label>
+            <input type="text" name="firstNameBox" id="firstNameBox" class="form-control" placeholder="Type firstname..." style="max-width: 150px;">
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <label for="lastNameBox" class="fw-normal lh-1 fs-5 mb-0" style="color:steelblue; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Last Name:</label>
+            <input type="text" name="lastNameBox" id="lastNameBox" class="form-control" placeholder="Type lastname..." style="max-width: 150px;">          
+          </div>
+
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <label class="fw-normal lh-1 fs-5 mb-0" style="color: steelblue; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Select Avatar:</label>
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="avatarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="/assets/img/avatars/default.jpg" id="selectedAvatarImg" width="40" height="40" class="rounded-circle" alt="Avatar">
+              </button>
+              <div class="dropdown-menu p-2" aria-labelledby="avatarDropdown" style="min-width: auto;">
+                <div class="avatar-grid">
+                  <% const avatars = ['avatar1.jpg', 'avatar2.jpg', 'avatar3.jpg', 'avatar4.jpg', 'avatar5.jpg', 'avatar6.jpg', 'avatar7.jpg']; %>
+                  <% avatars.forEach(function(avatar) { %>
+                    <div class="avatar-item" onclick="selectAvatar('<%= avatar %>')">
+                      <img src="/assets/img/avatars/<%= avatar %>" width="80" height="80" class="rounded-circle" alt="Avatar">
+                    </div>
+                  <% }); %>
+                </div>
+              </div>
+            </div>
+          </div>            
+          <!-- Hidden input for form submission -->
+          <input type="hidden" name="selectedAvatar" id="selectedAvatarInput" value="">
+
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+  </main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+
+
+<script>
+
+  function selectAvatar(filename) {
+    document.getElementById('selectedAvatarImg').src = '/assets/img/avatars/' + filename;
+    document.getElementById('selectedAvatarInput').value = filename;
+  }
+
+  function toggleUserForm() {
+    const section = document.getElementById("userFormSection");
+    section.classList.toggle("show");
+    const line = document.getElementById("userHRLine");
+    line.classList.toggle("show");
+
+    if (section.classList.contains("show")) {
+      setTimeout(() => {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300); // Delay to match part of the transition
+    }    
+  }
+</script>
+
+</body>
+
+
+<footer class="py-3 my-4 bg-dark text-white">
+  <ul class="nav justify-content-center pb-3 mb-3">
+    <li class="nav-item"><a href="/" class="nav-link px-2 ">Home</a></li>
+    <li class="nav-item"><a href="#" class="nav-link px-2 ">Top</a></li>
+    <li class="nav-item"><a href="#" class="nav-link px-2 ">About</a></li>
+  </ul>
+  <p class="text-center">© 2025 Family BookNotes</p>
+</footer>
+
+</html>

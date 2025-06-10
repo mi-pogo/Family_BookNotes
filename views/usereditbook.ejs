@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Notes</title>
+  <link rel="stylesheet" href="./styles/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">  
+</head>
+
+
+<header data-bs-theme="dark">
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      
+      <% if (locals.user){%>
+        <form action="/view" method="POST" style="display: inline;">
+          <input type="hidden" name="userId" value="<%= user.id %>">
+          <button type="submit" class="btn btn-outline-light btn-sm me-2">&lt;&lt; Back</button>
+        </form>
+        <% } %>
+  
+        <a class="navbar-brand" href="/">Book Notes</a>
+  
+    </div>
+  </nav>
+</header>
+
+<body>
+
+  <main>
+
+    <div class="container marketing usrbooks-bd-top">
+
+      <hr class="featurette-divider" >  
+      
+      <% if (locals.user){%>
+        
+        <div class="row align-items-center justify-content-between">
+
+          <!-- Left: User Info -->
+          <div class="col-12 col-md-4 d-flex flex-column align-items-center text-center mb-3 mb-md-0">
+            <img src="../assets/img/avatars/avatar<%=user.picId%>.jpg" class="bd-placeholder-img rounded-circle mb-3" width="140" height="140" />
+            <h2 class="fw-normal"><%=user.firstName%>, <%=user.lastName%></h2>
+          </div>
+        
+        </div>
+        
+
+      <% } %>      
+
+      <% if (locals.user){%>
+          <hr class="featurette-divider">
+          <div class="row featurette">
+
+            <div class="col-md-3 order-md-1 text-md-start text-center" style="padding-bottom: 5%;">
+              <% if (parseInt(bookCoverId) > 0){%>
+                <img src="https://covers.openlibrary.org/b/id/<%=bookCoverId%>-L.jpg" alt="Book cover" class="img-fluid" />
+              <% } else { %>
+                <img src="/assets/img/default_cover.png" alt="Book cover" class="img-fluid" />
+              <% } %>
+            </div>
+
+            <div class="col-md-7 order-md-2">
+              <h2 class="text-body-primary text-md-start text-center"><%= bookTitle %></h2>
+              <h4 class="text-body-secondary text-md-start text-center">Author: <%= bookAuthor %></h4>
+              <br>
+              <form action="/updatebook" method="POST">
+            
+                <div class="mb-3 row">
+                  <label class="col-form-label col-sm-2 fw-normal lh-1 text-body-secondary fs-5">Your rating: </label>
+                  <div class="col-sm-10 d-flex gap-2">
+                    <select class="form-select fw-normal lh-1 text-body-secondary fs-6" id="myRating" name="myRating">
+                      <option disabled <%= !bookRating ? 'selected' : '' %>>Choose a value</option>
+                      <option value="1" <%= bookRating == 1 ? 'selected' : '' %>>⭐</option>
+                      <option value="2" <%= bookRating == 2 ? 'selected' : '' %>>⭐⭐</option>
+                      <option value="3" <%= bookRating == 3 ? 'selected' : '' %>>⭐⭐⭐</option>
+                      <option value="4" <%= bookRating == 4 ? 'selected' : '' %>>⭐⭐⭐⭐</option>
+                      <option value="5" <%= bookRating == 5 ? 'selected' : '' %>>⭐⭐⭐⭐⭐</option>
+                    </select>                    
+                  </div>
+                </div>
+
+                <div class="mb-3 row">
+                  <label for="notes" class="col-sm-2 col-form-label fw-normal lh-1 text-body-secondary fs-5">Your notes: </label>
+                  <div class="col-sm-10">
+                    <textarea class="form-control fs-6" id="myNotes" name="myNotes" rows="4"><%= bookNote %></textarea>
+                  </div>
+                </div>
+
+                <div class="mb-3 text-end">
+                  <input type="hidden" name="bookId" value="<%= bookId %>" />
+                  <input type="hidden" name="userId" value="<%= user.id %>">
+                  <button type="submit" class="btn btn-secondary">Update Book »</button>
+                </div>
+
+              </form>
+
+            </div>
+
+          </div>
+      <% } %>
+
+      <hr class="featurette-divider">
+
+    </div>
+
+  </main>
+
+<script defer="" src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"></script>
+
+</body>
+
+
+<footer class="py-3 my-4 bg-dark text-white">
+  <ul class="nav justify-content-center pb-3 mb-3">
+    <li class="nav-item"><a href="/" class="nav-link px-2 ">Home</a></li>
+    <li class="nav-item"><a href="#" class="nav-link px-2 ">Top</a></li>
+    <li class="nav-item"><a href="#" class="nav-link px-2 ">About</a></li>
+  </ul>
+  <p class="text-center">© 2025 Family BookNotes</p>
+</footer>
+
+</html>

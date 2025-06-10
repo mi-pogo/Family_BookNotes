@@ -1,0 +1,74 @@
+.header_font{
+    font-family: 'Pacifico', cursive;
+    color:darkblue;
+    font-size: clamp(2rem, 6vw, 5rem); /* min 2rem, scales with viewport, max 5rem */
+}
+
+.usrbooks-bd-top{
+    padding-top: 65px;
+}
+
+.users-bd-bottom{
+    padding-bottom: 40px;
+}
+
+.book_cover_pad{
+    padding-top: 20px;
+}
+
+.sort_padding{
+  padding-top: 2rem;
+}
+
+/* CSS to make it transition smoothly */
+  .collapse-form {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    position: relative; /* for stacking context */
+    z-index: 1;
+  }
+
+  .collapse-form.show {
+    max-height: 500px; /* adjust as needed */
+    opacity: 1;
+    overflow: visible; /* <-- this allows the dropdown to be visible */
+  }
+  
+/* Remove Bootstrap default padding and force size to match image */
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 80px); /* or auto-fill */
+    gap: 8px;
+    justify-content: start;
+    padding: 0;
+    width: max-content; /* make grid width fit content */
+    max-width: 300px;   /* or whatever max width you want */
+  }  
+  
+  .avatar-item {
+    cursor: pointer;
+    width: 80px;
+    height: 80px;
+  }
+  
+  .avatar-item img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: block;
+  }
+
+
+  .book_cover_pad {
+    padding: 5px;
+  }  
+  
+  
+  @media (max-width: 576px) {
+    #editBookForm .d-flex {
+      flex-direction: column;
+    }
+  }
+  
