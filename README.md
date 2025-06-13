@@ -31,8 +31,10 @@ cd book-notes-capstone
 ```
 
 2. **Database Structure**
+```bash
 See the file "queries.sql" for queries to generate tables
 Set your database connection parameters and credentials in index.js
+```
 
 3. **Run the server**
 ```bash
