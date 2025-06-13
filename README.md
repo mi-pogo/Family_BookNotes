@@ -28,6 +28,13 @@ A simple web application to keep track of your family book notes. Built using **
 ```bash
 git clone https://github.com/your-username/book-notes-capstone.git
 cd book-notes-capstone
+```
 
 2. **Database Structure**
 See the file "queries.sql" for queries to generate tables
+Set your database connection parameters and credentials in index.js
+
+3. **Run the server**
+```bash
+node index.js
+```
