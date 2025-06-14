@@ -40,3 +40,8 @@ Set your database connection parameters and credentials in index.js
 ```bash
 node index.js
 ```
+
+4. **Access the page**
+```bash
+yourServerIP:3000
+```
