@@ -6,8 +6,8 @@ A simple web application to keep track of your family book notes. Built using **
 
 ## 🚀 Features
 
-- Add, view, edit, and delete users
-- Add, view, edit, and delete books per user
+- Add, view and delete users
+- Add, view, edit and delete read books per user
 - Edit, update notes and rating
 
 ---
@@ -26,8 +26,8 @@ A simple web application to keep track of your family book notes. Built using **
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/your-username/book-notes-capstone.git
-cd book-notes-capstone
+git clone https://github.com/mi-pogo/Family_BookNotes.git
+cd Family_BookNotes
 ```
 
 2. **Database Structure**
